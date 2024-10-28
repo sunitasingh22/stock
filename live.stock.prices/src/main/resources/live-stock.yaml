@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: Live Stock Price Service API
+  description: API to fetch live stock prices from Alpha Vantage.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082/
+    description: Local Server
+
+paths:
+  /price/{symbol}:
+    get:
+      summary: Fetch live stock price by symbol
+      description: Returns the live stock price for a requested stock symbol which are present in user's portfolio'.
+      tags:
+        - Live Stock Price
+      operationId: getStockPrice
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          description: The stock symbol to fetch the price for.
+          schema:
+            type: string
+            example: AAPL
+      responses:
+        '200':
+          description: Live Stock price fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStockPrice'
+        '404':
+          description: Stock not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    LiveStockPrice:
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: "AAPL"
+        price:
+          type: string
+          example: "1500"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2024-10-24T10:00:00Z"
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: "Internal Server Error"
