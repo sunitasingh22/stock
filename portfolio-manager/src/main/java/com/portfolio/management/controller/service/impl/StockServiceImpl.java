@@ -15,9 +15,10 @@ import com.portfolio.management.model.UserBO;
 import com.portfolio.management.repository.PortfolioRepository;
 import com.portfolio.management.repository.StockRepository;
 import com.portfolio.management.repository.UserRepository;
+import com.portfolio.management.service.StockService;
 
 @Service
-public class StockServiceImpl {
+public class StockServiceImpl implements StockService{
 	
 	@Autowired
 	private StockRepository stockRepository;
