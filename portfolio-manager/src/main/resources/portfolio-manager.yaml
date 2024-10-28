@@ -1,0 +1,303 @@
+openapi: 3.0.3
+info:
+  title: Stock Portfolio Management Service API
+  description: API to manage a user's stock portfolio (add, remove, and list stocks).
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081/
+    description: Local Server
+
+paths:
+  /stocks/{userId}:
+    get:
+      summary: Get all stocks in the portfolio for a specific user
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      tags:
+        - Portfolio
+      operationId: getAllStocks
+      responses:
+        '200':
+          description: A list of all stocks in the user's portfolio
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stock'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Add a new stock to the portfolio
+      tags:
+        - Portfolio
+      operationId: addStock
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertStockRequest'
+      responses:
+        '204':
+          description: Stock added successfully
+          
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Resource Not Found
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /stocks/{userId}/{stockId}:
+    delete:
+      summary: Remove a stock from user's profile
+      tags: 
+        - Portfolio
+      operationId: deleteStock
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - name: stockId
+          in: path
+          required: true
+          description: The stock ID to remove from the portfolio
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Stock and associated portfolio entry deleted successfully
+          content: 
+            text/plain:
+              schema: 
+                type: string
+                example: Stock and associated portfolio entry deleted successfully
+        '404':
+          description: Stock or user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/Error'
+        
+  /portfolio/{userId}:
+    get:
+      summary: Get portfolio details for a specific user
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      tags:
+        - Portfolio
+      operationId: getPortfolioByUserId
+      responses:
+        '200':
+          description: A list of all stocks in the user's portfolio
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Portfolio'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /users/adduser:
+    post:
+      summary: Add a new user
+      tags:
+        - Users
+      operationId: addUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Users'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserError'
+        '500':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserError'
+
+  /users/login:
+    post:
+      summary: User login
+      tags:
+        - Users
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+        '401':
+          description: Unauthorized - incorrect credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid username or password"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserError'
+                
+components:
+  parameters:
+    userId:
+      name: userId
+      in: path
+      description: User ID
+      schema:
+        type: integer
+        format: int64
+      required: true
+  schemas:
+    InsertStockRequest:
+      type: object
+      description: Request object to insert the stock into the portfolio
+      required:
+        - symbol
+        - name
+        - quantity
+      properties:
+        symbol:
+          type: string
+          example: TCS
+        name:
+          type: string
+          example: Tata Consultancy services
+        quantity:
+          type: integer
+          minLength: 1
+          maxLength: 1000
+          example: 200
+      additionalProperties: false
+      
+    Stock:
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: TCS
+        name:
+          type: string
+          example: Tata Consultancy services
+
+    Portfolio:
+      type: object
+      description: Portfolio entry for a user
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        stock_id:
+          type: integer
+          example: 1001
+        quantity:
+          type: integer
+          example: 20
+
+    Users:
+      type: object
+      properties:
+        username:
+          type: string
+          example: sunita
+        email:
+          type: string
+          example: sunita@gmail.com
+        password:
+          type: string
+          example: sunita
+        
+    UserLogin:
+      type: object
+      description: User login request information
+      properties:
+        username:
+          type: string
+          example: "sunita"
+        password:
+          type: string
+          example: "sunita"
+  
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Stock/Portfolio not found
+          
+    UserError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: User not found
