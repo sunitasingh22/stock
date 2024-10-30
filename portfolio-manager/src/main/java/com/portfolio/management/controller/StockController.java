@@ -18,9 +18,14 @@ import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
 import com.portfolio.management.service.StockService;
 
+import ch.qos.logback.classic.Logger;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/stocks")
 @CrossOrigin(origins = "*")
+@Slf4j
 public class StockController {
 
 	@Autowired
@@ -31,37 +36,31 @@ public class StockController {
 
 	@PostMapping("/{userId}")
 	public ResponseEntity<Void> addStock(@PathVariable Long userId, @RequestBody InsertStockRequest addStockRequest) {
+		log.info("Request to add stock for userId: {}", userId);
 		stockService.addStock(userId, addStockRequest);
+		log.info("Stock added successfully for userId: {}", userId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{userId}/{stockId}")
 	public ResponseEntity<String> deleteStock(@PathVariable Long userId, @PathVariable Long stockId) {
-		// First, remove the stock from the portfolio
+		log.info("Request to delete stock with stockId: {} for userId: {}", stockId, userId);
 		portfolioService.removeStockFromPortfolio(userId, stockId);
-
-		// Then, delete the stock
+		log.info("Stock deleted successfully for userId: {}", stockId, userId);
 		stockService.deleteStock(stockId, userId);
 		return ResponseEntity.noContent().build();
-		//return ResponseEntity.ok("Stock and associated portfolio entry deleted successfully");
 	}
 
 	@GetMapping("/{userId}")
 	public ResponseEntity<List<StocksBO>> getAllStocksByUserId(@PathVariable Long userId) {
+		log.info("Fetching all stocks for userId: {}", userId);
 		List<StocksBO> stocks = stockService.getAllStocksByUserId(userId);
+		if (stocks.isEmpty()) {
+            log.warn("Stocks not found for userId: {}", userId);
+        } else {
+            log.info("Found {} stocks for userId: {}", stocks.size(), userId);
+        }
 		return ResponseEntity.ok(stocks);
 	}
-
-	/*
-	 * @GetMapping("/symbol/{stockId}") public String getStockSymbol(@PathVariable
-	 * Long stockId) { return stockService.getStockSymbol(stockId); }
-	 */
-
-	/*
-	 * @GetMapping("/{userId}/{stockId}") public ResponseEntity<List<Stocks>>
-	 * getStockInfoByUserId(@PathVariable Long userId,@PathVariable Long stockId) {
-	 * List<Stocks> stocks = stockService.getStockInfoByUserId(userId,stockId);
-	 * return ResponseEntity.ok(stocks); }
-	 */
 
 }

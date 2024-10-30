@@ -11,11 +11,11 @@ public interface StockService {
 
 	public void deleteStock(Long stockId, Long userId);
 
-	public List<StocksBO> getAllStocks();
+	//public List<StocksBO> getAllStocks();
 
 	public List<StocksBO> getAllStocksByUserId(Long userId);
 
-	public List<StocksBO> getStockInfoByUserId(Long userId, Long stockId);
+	//public List<StocksBO> getStockInfoByUserId(Long userId, Long stockId);
 
 	public String getStockSymbol(Long stockId);
 

@@ -1,6 +1,8 @@
 package com.portfolio.management.controller.service.impl;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,12 @@ import com.portfolio.management.repository.StockRepository;
 import com.portfolio.management.repository.UserRepository;
 import com.portfolio.management.service.StockService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
-public class StockServiceImpl implements StockService{
-	
+@Slf4j
+public class StockServiceImpl implements StockService {
+
 	@Autowired
 	private StockRepository stockRepository;
 
@@ -29,17 +34,14 @@ public class StockServiceImpl implements StockService{
 	@Autowired
 	private UserRepository userRepository;
 
-	/*
-	 * @Autowired private TransactionRepository transactionRepository;
-	 */
-
 	public StockServiceImpl(StockRepository stockRepository) {
 		this.stockRepository = stockRepository;
 	}
 
 	public StocksBO addStock(Long userId, InsertStockRequest addStockRequest) {
+		log.info("Adding new stock details for userId: {}, stock symbol: {}", userId, addStockRequest.getSymbol());
 
-		// Step 1: Find or create the stock in the database
+		// Find or create the stock in the database
 		StocksBO stock = stockRepository.findBySymbol(addStockRequest.getSymbol()).orElseGet(() -> {
 			StocksBO newStock = new StocksBO();
 			newStock.setSymbol(addStockRequest.getSymbol());
@@ -47,20 +49,23 @@ public class StockServiceImpl implements StockService{
 			return stockRepository.save(newStock);
 		});
 
-		// Step 2: Fetch the user
-		UserBO user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		// Fetch the user
+		UserBO user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-		// Step 3: Check if the stock is already in the user's portfolio
-		PortfolioBO existingPortfolioEntry = portfolioRepository.findByUserAndStock(user, stock);
+		// Check if the stock is already in the user's portfolio
+		PortfolioBO existingPortfolioEntry = portfolioRepository.findByUserIdAndStockId(user.getId(), stock.getId());
 
 		if (existingPortfolioEntry != null) {
 			// Stock already exists in the portfolio, update the quantity
+			log.info("Stock already in portfolio for this userId, only updating quantity", userId);
 			existingPortfolioEntry.setUser(user);
 			existingPortfolioEntry.setStock(stock);
 			existingPortfolioEntry.setQuantity(existingPortfolioEntry.getQuantity() + addStockRequest.getQuantity());
 			portfolioRepository.save(existingPortfolioEntry);
 		} else {
 			// Stock doesn't exist in the portfolio, create a new entry
+			 log.info("This Stock is newly adding in portfolio for this userId: {}, adding new portfolio entry", userId);
 			PortfolioBO newPortfolioEntry = new PortfolioBO();
 			newPortfolioEntry.setUser(user);
 			newPortfolioEntry.setStock(stock);
@@ -68,79 +73,59 @@ public class StockServiceImpl implements StockService{
 			portfolioRepository.save(newPortfolioEntry);
 		}
 
-		/*
-		 * StockTransactions stockTransactions = new StockTransactions();
-		 * stockTransactions.setUser(user); stockTransactions.setStock(stock);
-		 * stockTransactions.setQuantity(addStockRequest.getQuantity());
-		 * stockTransactions.setTransactionType("BUY");
-		 * stockTransactions.setTransactionPrice(1500); // Assuming you have the price
-		 * to log stockTransactions.setTransactionDate(LocalDateTime.now());
-		 * 
-		 * transactionRepository.save(stockTransactions); // Save transaction record
-		 */
 		return stock;
 
 	}
 
 	@Transactional
 	public void deleteStock(Long stockId, Long userId) {
-
-		UserBO user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+		log.info("Selling/Removing stock with stockId: {} for userId: {}", stockId, userId);
+		UserBO user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
 		// Retrieve the stock
 		StocksBO stock = stockRepository.findById(stockId)
 				.orElseThrow(() -> new ResourceNotFoundException("Stock not found"));
 
-		/*
-		 * StockTransactions transactions = new StockTransactions();
-		 * transactions.setUser(user); transactions.setStock(stock);
-		 * transactions.setQuantity(0); // Set to 0, as it's a deletion
-		 * transactions.setTransactionType("SELL"); // Treat deletion as a sell action
-		 * transactions.setTransactionPrice(0); // Can be adjusted based on your needs
-		 * transactions.setTransactionDate(LocalDateTime.now());
-		 * 
-		 * transactionRepository.save(transactions); // Save transaction record
-		 */
 		stockRepository.deleteById(stockId);
+		 log.info("Stock deleted successfully", stockId);
 
 	}
 
-	public List<StocksBO> getAllStocks() {
-		return stockRepository.findAll();
-	}
+	//public List<StocksBO> getAllStocks() {
+		// log.info("Fetching all stocks");
+		//return stockRepository.findAll();
+	//}
 
 	public List<StocksBO> getAllStocksByUserId(Long userId) {
+		log.info("Getting all stocks for userId: {}", userId);
 		// Fetch the user to ensure they exist
 		UserBO user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-		
-		  // Fetch portfolio entries for the user
-        List<PortfolioBO> portfolios = portfolioRepository.findByUser(user);
 
-        // Extract stocks associated with the portfolio and return the list
-        return portfolios.stream()
-                .map(PortfolioBO::getStock)  // Get the stock from each portfolio entry
-                .collect(Collectors.toList());
+		// Fetch portfolio entries for the user
+		List<PortfolioBO> portfolios = portfolioRepository.findByUserId(userId);
+		if (portfolios == null) {
+			log.warn("Portfolio not found for userId: {}", userId);
+			return Collections.emptyList();
+		}
+
+		// Extract stocks associated with the portfolio and return the list
+		return portfolios.stream().map(PortfolioBO::getStock) // Get the stock from each portfolio entry
+				.collect(Collectors.toList());
 	}
 
-	public List<StocksBO> getStockInfoByUserId(Long userId, Long stockId) {
-		UserBO user = userRepository.findById(userId)
-				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-		
-		PortfolioBO portfolio = portfolioRepository.findById(stockId)
-				.orElseThrow(() -> new ResourceNotFoundException("Stock not found with id: " + userId));
-		
-		return null;
-	}
-	
 	public String getStockSymbol(Long stockId) {
-        // Fetch the stock entity based on stockId
-        StocksBO stock = stockRepository.findById(stockId).orElse(null);
-        if (stock != null) {
-            return stock.getSymbol(); // Assuming Stock has a getSymbol() method
-        } else {
-            throw new RuntimeException("Stock not found with ID: " + stockId);
-        }
-    }
+		// Fetch the stock entity based on stockId
+		log.info("Getting stock symbol for given stockId: {}", stockId);
+		StocksBO stock = stockRepository.findById(stockId).orElse(null);
+		if (stock != null) {
+			log.info("Stock symbol found: {}", stock.getSymbol());
+			return stock.getSymbol();
+		} else {
+			 log.error("Stock symbol not found for given stockId: {}", stockId);
+			throw new RuntimeException("Stock not found for given stockId: " + stockId);
+		}
+	}
 
 }
