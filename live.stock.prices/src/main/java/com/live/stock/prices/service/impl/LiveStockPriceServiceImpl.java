@@ -32,7 +32,7 @@ public class LiveStockPriceServiceImpl implements LiveStockPriceService{
 		String url = String.format("%s?function=TIME_SERIES_INTRADAY&symbol=%s&interval=1min&apikey=%s", apiUrl, symbol,
 				apiKey);
 
-		log.info("Fetching stock price for symbol: {}", symbol);
+		log.info("Getting stock price for symbol: {}", symbol);
 
 		return webClient.get().uri(url).retrieve().bodyToMono(JsonNode.class) // Get response as JsonNode
 				.map(response -> {
