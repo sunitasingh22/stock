@@ -16,7 +16,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.portfolio.management.dto.Portfolio;
+import com.portfolio.management.mapper.PortfolioMapper;
+import com.portfolio.management.mapper.StockMapper;
 import com.portfolio.management.model.PortfolioBO;
+import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
 
 public class PortfolioControllerUnitTest {
@@ -28,21 +32,22 @@ public class PortfolioControllerUnitTest {
 	private PortfolioService portfolioService;
 
 	private Long userId;
-	private List<PortfolioBO> mockPortfolioList;
+	private List<Portfolio> mockPortfolioList;
 
 	@BeforeEach
 	private void setUp() {
 		MockitoAnnotations.openMocks(this);
 		userId = 1L;
-		mockPortfolioList = Arrays.asList(new PortfolioBO(), new PortfolioBO());
+		mockPortfolioList = Arrays.asList(new Portfolio(), new Portfolio());
 	}
 
 	@Test
 	public void testGetPortfolioByUserId() {
 
-		when(portfolioService.getPortfolioByUserId(userId)).thenReturn(mockPortfolioList);
+		List<PortfolioBO> portfolioBOList = PortfolioMapper.INSTANCE.toBOList(mockPortfolioList);
+		when(portfolioService.getPortfolioByUserId(userId)).thenReturn(portfolioBOList);
 
-		ResponseEntity<List<PortfolioBO>> responseObject = portfolioController.getPortfolioByUserId(userId);
+		ResponseEntity<List<Portfolio>> responseObject = portfolioController.getPortfolioByUserId(userId);
 
 		assertEquals(HttpStatus.OK, responseObject.getStatusCode());
 		assertEquals(mockPortfolioList, responseObject.getBody());

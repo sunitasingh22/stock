@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.portfolio.management.dto.Portfolio;
+import com.portfolio.management.mapper.PortfolioMapper;
 import com.portfolio.management.model.PortfolioBO;
 import com.portfolio.management.service.PortfolioService;
 
@@ -25,15 +27,16 @@ public class PortfolioController {
 	private PortfolioService portfolioService;
 	
 	@GetMapping("/{userId}")
-	public ResponseEntity<List<PortfolioBO>> getPortfolioByUserId(@PathVariable Long userId) {
+	public ResponseEntity<List<Portfolio>> getPortfolioByUserId(@PathVariable Long userId) {
 		log.info("Fetching portfolio details like stocks, quantity for userId: {}", userId);
 	    List<PortfolioBO> portfolio = portfolioService.getPortfolioByUserId(userId);
-	    if (portfolio.isEmpty()) {
+	    List<Portfolio> portfolioList = PortfolioMapper.INSTANCE.toDtoList(portfolio);
+	    if (portfolioList.isEmpty()) {
 	        log.warn("Portfolio details not found for userId: {}", userId);
 	    } else {
-	        log.info("Portfolio details found successfully for userId: {}", userId, portfolio.size());
+	        log.info("Portfolio details found successfully for userId: {}", userId);
 	    }
-	     return ResponseEntity.ok(portfolio);
+	     return ResponseEntity.ok(portfolioList);
 	}
 	    
 }

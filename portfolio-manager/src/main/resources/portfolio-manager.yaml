@@ -277,12 +277,12 @@ components:
         id:
           type: integer
           example: 1
-        user_id:
-          type: integer
-          example: 1
-        stock_id:
-          type: integer
-          example: 1001
+        user:
+          $ref: '#/components/schemas/Users'
+          description: User who owns the portfolio entry
+        stock:
+          $ref: '#/components/schemas/Stocks'
+          description: Stock associated with this portfolio entry
         quantity:
           type: integer
           example: 20

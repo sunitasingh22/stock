@@ -20,9 +20,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.management.dto.Portfolio;
+import com.portfolio.management.dto.Stocks;
+import com.portfolio.management.dto.Users;
+import com.portfolio.management.mapper.PortfolioMapper;
 import com.portfolio.management.model.PortfolioBO;
 import com.portfolio.management.model.StocksBO;
-import com.portfolio.management.model.UserBO;
 import com.portfolio.management.service.PortfolioService;
 
 @SpringBootTest
@@ -52,49 +55,48 @@ public class PortfolioControllerIntegrationTest {
         Long userId = 1L;
         
         // Create UserBO
-        UserBO user1 = new UserBO();
-        user1.setId(1L);
+        Users user1 = new Users();
+        user1.setId(1);
         user1.setUsername("sai");
         user1.setPassword("123123");
         user1.setEmail("sai@gmail.com");
-        user1.setCreatedDate(null);
+       // user1.setCreatedDate(null);
 
         // Create StocksBO
-        StocksBO stock1 = new StocksBO();
-        stock1.setId(1L);
+        Stocks stock1 = new Stocks();
+        stock1.setId(1);
         stock1.setSymbol("AAPL");
         stock1.setName("Apple Inc.");
-        stock1.setStockAddedDate(null);
+       // stock1.setStockAddedDate(null);
 
-        StocksBO stock2 = new StocksBO();
-        stock2.setId(2L);
+        Stocks stock2 = new Stocks();
+        stock2.setId(2);
         stock2.setSymbol("AA");
         stock2.setName("AAAAA");
-        stock2.setStockAddedDate(null);
+        //stock2.setStockAddedDate(null);
 
         // Create PortfolioBOs
-        PortfolioBO portfolio1 = new PortfolioBO();
+        Portfolio portfolio1 = new Portfolio();
+        portfolio1.setId(1);
         portfolio1.setUser(user1);
         portfolio1.setStock(stock1);
         portfolio1.setQuantity(10);
-        portfolio1.setAddedAt(null);
 
-        PortfolioBO portfolio2 = new PortfolioBO();
+        Portfolio portfolio2 = new Portfolio();
+        portfolio2.setId(1);
         portfolio2.setUser(user1);
         portfolio2.setStock(stock2);
         portfolio2.setQuantity(20);
-        portfolio2.setAddedAt(null);
 
-        List<PortfolioBO> portfolios = Arrays.asList(portfolio1, portfolio2);
+        List<Portfolio> portfolioList = Arrays.asList(portfolio1, portfolio2);
+        List<PortfolioBO> portfolioBOList = PortfolioMapper.INSTANCE.toBOList(portfolioList);
 
-        // Mock the service call
-        when(portfolioService.getPortfolioByUserId(userId)).thenReturn(portfolios);
-        System.out.println(objectMapper.writeValueAsString(portfolios));
+        when(portfolioService.getPortfolioByUserId(userId)).thenReturn(portfolioBOList);
+        System.out.println(objectMapper.writeValueAsString(portfolioBOList));
 
-        // Act & Assert
-        mockMvc.perform(get("/portfolio/{userId}", userId) // Ensure correct endpoint
+        mockMvc.perform(get("/portfolio/{userId}", userId) 
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(portfolios)));
+                .andExpect(content().json(objectMapper.writeValueAsString(portfolioList)));
     }
 }
