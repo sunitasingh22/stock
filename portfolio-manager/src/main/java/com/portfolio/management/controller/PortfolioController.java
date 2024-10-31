@@ -31,7 +31,7 @@ public class PortfolioController {
 	    if (portfolio.isEmpty()) {
 	        log.warn("Portfolio details not found for userId: {}", userId);
 	    } else {
-	        log.info("Portfolio details found successfully for userId: {}", userId);
+	        log.info("Portfolio details found successfully for userId: {}", userId, portfolio.size());
 	    }
 	     return ResponseEntity.ok(portfolio);
 	}

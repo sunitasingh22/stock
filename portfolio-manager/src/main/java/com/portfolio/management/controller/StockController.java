@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.portfolio.management.dto.InsertStockRequest;
+import com.portfolio.management.dto.StockList;
+import com.portfolio.management.dto.Stocks;
+import com.portfolio.management.mapper.StockListMapper;
+import com.portfolio.management.mapper.StockMapper;
+import com.portfolio.management.model.StockListBO;
 import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
+import com.portfolio.management.service.StockListService;
 import com.portfolio.management.service.StockService;
 
-import ch.qos.logback.classic.Logger;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -33,6 +37,9 @@ public class StockController {
 
 	@Autowired
 	private PortfolioService portfolioService;
+
+	@Autowired
+	private StockListService stockListService;
 
 	@PostMapping("/{userId}")
 	public ResponseEntity<Void> addStock(@PathVariable Long userId, @RequestBody InsertStockRequest addStockRequest) {
@@ -52,15 +59,29 @@ public class StockController {
 	}
 
 	@GetMapping("/{userId}")
-	public ResponseEntity<List<StocksBO>> getAllStocksByUserId(@PathVariable Long userId) {
-		log.info("Fetching all stocks for userId: {}", userId);
-		List<StocksBO> stocks = stockService.getAllStocksByUserId(userId);
-		if (stocks.isEmpty()) {
-            log.warn("Stocks not found for userId: {}", userId);
-        } else {
-            log.info("Found {} stocks for userId: {}", stocks.size(), userId);
-        }
-		return ResponseEntity.ok(stocks);
+	public ResponseEntity<List<Stocks>> getAllStocksByUserId(@PathVariable Long userId) {
+		log.info("Getting all stocks for userId: {}", userId);
+		List<StocksBO> stockBo = stockService.getAllStocksByUserId(userId);
+		List<Stocks> stocksList = StockMapper.INSTANCE.toDtoList(stockBo);
+		if (stocksList.isEmpty()) {
+			log.warn("Stocks not found for userId: {}", userId);
+		} else {
+			log.info("Found {} stocks for userId: {}", stocksList.size(), userId);
+		}
+		return ResponseEntity.ok(stocksList);
+	}
+
+	@GetMapping("/all")
+	public List<StockList> getAllStocks() {
+		log.info("Getting list of all stocks");
+		List<StockListBO> allStocksList = stockListService.getAllStocks();
+		if(allStocksList.isEmpty()) {
+			log.warn("Stock List not fetched from database");
+		}else {
+			log.info("Received stocks list from database");
+		}
+		List<StockList> StockListdto = StockListMapper.INSTANCE.toDtoList(allStocksList);
+		return StockListdto;
 	}
 
 }

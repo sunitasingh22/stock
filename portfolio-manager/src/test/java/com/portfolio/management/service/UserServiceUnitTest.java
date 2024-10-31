@@ -16,9 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.portfolio.management.controller.service.impl.UserServiceImpl;
 import com.portfolio.management.model.UserBO;
 import com.portfolio.management.repository.UserRepository;
+import com.portfolio.management.service.impl.UserServiceImpl;
 
 public class UserServiceUnitTest {
 

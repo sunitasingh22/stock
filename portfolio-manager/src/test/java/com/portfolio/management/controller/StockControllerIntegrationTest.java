@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.management.dto.InsertStockRequest;
+import com.portfolio.management.dto.Stocks;
+import com.portfolio.management.mapper.StockMapper;
 import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
 import com.portfolio.management.service.StockService;
@@ -84,20 +86,22 @@ public class StockControllerIntegrationTest {
         Long userId = 1L;
 
         // Sample stock data
-        StocksBO stock1 = new StocksBO();
-        stock1.setId(1L);
+        Stocks stock1 = new Stocks();
+        stock1.setId(1);
         stock1.setSymbol("AAPL");
         stock1.setName("Apple Inc.");
 
-        StocksBO stock2 = new StocksBO();
-        stock2.setId(2L);
+        Stocks stock2 = new Stocks();
+        stock2.setId(2);
         stock2.setSymbol("AA");
         stock2.setName("Alcoa Corp");
 
-        List<StocksBO> stocks = Arrays.asList(stock1, stock2);
+        List<Stocks> stocks = Arrays.asList(stock1, stock2);
+        
+        List<StocksBO> stockBOList = StockMapper.INSTANCE.toBOList(stocks);
 
         // Mock the service call
-        when(stockService.getAllStocksByUserId(userId)).thenReturn(stocks);
+        when(stockService.getAllStocksByUserId(userId)).thenReturn(stockBOList);
 
         // Act & Assert
         mockMvc.perform(get("/stocks/{userId}", userId)

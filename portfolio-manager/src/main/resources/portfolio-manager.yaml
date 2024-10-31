@@ -6,8 +6,32 @@ info:
 servers:
   - url: http://localhost:8081/
     description: Local Server
-
+    
+    
 paths:
+  /stocks/all:
+    get:
+      summary: Get list of all stocks from db
+      tags:
+        - StockList
+      operationId: getStockList
+      responses:
+        '200':
+          description: Get list of all stocks from db to show in front end drop down
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockList'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
   /stocks/{userId}:
     get:
       summary: Get all stocks in the portfolio for a specific user
@@ -24,7 +48,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Stock'
+                  $ref: '#/components/schemas/Stocks'
         '500':
           description: Server error
           content:
@@ -233,9 +257,12 @@ components:
           example: 200
       additionalProperties: false
       
-    Stock:
+    Stocks:
       type: object
       properties:
+        id:
+          type: integer
+          example: 1
         symbol:
           type: string
           example: TCS
@@ -247,6 +274,9 @@ components:
       type: object
       description: Portfolio entry for a user
       properties:
+        id:
+          type: integer
+          example: 1
         user_id:
           type: integer
           example: 1
@@ -260,6 +290,9 @@ components:
     Users:
       type: object
       properties:
+        id:
+          type: integer
+          example: 1
         username:
           type: string
           example: sunita
@@ -269,6 +302,19 @@ components:
         password:
           type: string
           example: sunita
+          
+    StockList:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        symbol:
+          type: string
+          example: AAPL
+        name:
+          type: string
+          example: Apple Inc
         
     UserLogin:
       type: object

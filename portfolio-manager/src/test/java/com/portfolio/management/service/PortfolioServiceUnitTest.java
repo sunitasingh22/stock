@@ -14,11 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.portfolio.management.controller.service.impl.PortfolioServiceImpl;
 import com.portfolio.management.model.PortfolioBO;
 import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.model.UserBO;
 import com.portfolio.management.repository.PortfolioRepository;
+import com.portfolio.management.service.impl.PortfolioServiceImpl;
 
 public class PortfolioServiceUnitTest {
 

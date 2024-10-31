@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.portfolio.management.dto.InsertStockRequest;
+import com.portfolio.management.dto.Stocks;
+import com.portfolio.management.mapper.StockMapper;
 import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
 import com.portfolio.management.service.StockService;
@@ -35,15 +37,15 @@ public class StockControllerUnitTest {
 	private Long userId;
 	private Long stockId;
 	private InsertStockRequest addStockRequest;
-	private List<StocksBO> stockList;
+	private List<Stocks> stockList;
 
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 		userId = 1L;
 		stockId = 1L;
-		addStockRequest = new InsertStockRequest(); 
-		stockList = Arrays.asList(new StocksBO(), new StocksBO());
+		addStockRequest = new InsertStockRequest();
+		stockList = Arrays.asList(new Stocks(), new Stocks());
 	}
 
 	@Test
@@ -65,9 +67,10 @@ public class StockControllerUnitTest {
 
 	@Test
 	public void testGetAllStocksByUserId() {
-		when(stockService.getAllStocksByUserId(userId)).thenReturn(stockList);
+		List<StocksBO> StockBOList = StockMapper.INSTANCE.toBOList(stockList);
+		when(stockService.getAllStocksByUserId(userId)).thenReturn(StockBOList);
 
-		ResponseEntity<List<StocksBO>> response = stockController.getAllStocksByUserId(userId);
+		ResponseEntity<List<Stocks>> response = stockController.getAllStocksByUserId(userId);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertEquals(stockList, response.getBody());

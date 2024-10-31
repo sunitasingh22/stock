@@ -1,8 +1,7 @@
-package com.portfolio.management.controller.service.impl;
+package com.portfolio.management.service.impl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,8 +110,7 @@ public class StockServiceImpl implements StockService {
 		}
 
 		// Extract stocks associated with the portfolio and return the list
-		return portfolios.stream().map(PortfolioBO::getStock) // Get the stock from each portfolio entry
-				.collect(Collectors.toList());
+		return portfolios.stream().map(PortfolioBO::getStock).collect(Collectors.toList());
 	}
 
 	public String getStockSymbol(Long stockId) {

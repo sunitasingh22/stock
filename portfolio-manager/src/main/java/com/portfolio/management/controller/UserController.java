@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.portfolio.management.dto.Users;
+import com.portfolio.management.mapper.UserMapper;
 import com.portfolio.management.model.UserBO;
 import com.portfolio.management.service.UserService;
 
@@ -27,11 +29,12 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/adduser")
-	public ResponseEntity<UserBO> addUser(@RequestBody UserBO user) {
+	public ResponseEntity<Users> addUser(@RequestBody UserBO user) {
 		 log.info("Request to add a new user: {}", user.getUsername());
 		UserBO createdUser = userService.addUser(user);
-		 log.info("New user created successfully with userId: {}", createdUser.getEmail());
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+		 Users userAdded = UserMapper.INSTANCE.userBOToDto(createdUser);
+		 log.info("New user created successfully with userId: {}", userAdded.getEmail());
+		return ResponseEntity.status(HttpStatus.CREATED).body(userAdded);
 	}
 
 	 @PostMapping("/login")
