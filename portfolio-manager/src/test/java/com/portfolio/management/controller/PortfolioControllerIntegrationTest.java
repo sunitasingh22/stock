@@ -54,28 +54,22 @@ public class PortfolioControllerIntegrationTest {
 
         Long userId = 1L;
         
-        // Create UserBO
         Users user1 = new Users();
         user1.setId(1);
         user1.setUsername("sai");
         user1.setPassword("123123");
         user1.setEmail("sai@gmail.com");
-       // user1.setCreatedDate(null);
 
-        // Create StocksBO
         Stocks stock1 = new Stocks();
         stock1.setId(1);
         stock1.setSymbol("AAPL");
         stock1.setName("Apple Inc.");
-       // stock1.setStockAddedDate(null);
 
         Stocks stock2 = new Stocks();
         stock2.setId(2);
         stock2.setSymbol("AA");
         stock2.setName("AAAAA");
-        //stock2.setStockAddedDate(null);
 
-        // Create PortfolioBOs
         Portfolio portfolio1 = new Portfolio();
         portfolio1.setId(1);
         portfolio1.setUser(user1);
