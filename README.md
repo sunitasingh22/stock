@@ -28,4 +28,8 @@ Before running the application, set up the database:
 2. Run this script in your MySQL database to create the required `stockmanager` schema and tables.
 
    ```sql
-   SOURCE portfolio-manager/stockmanager.sql;
+   SOURCE portfolio-manager/src/main
+/resources/stockmanager.sql;
+
+Pre-requisite: MySql, STS, VSCode 
+
