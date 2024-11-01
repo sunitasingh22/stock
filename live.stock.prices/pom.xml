@@ -11,7 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>live.stock.prices</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>live.stock.prices</name>
+	<name>live-stock-prices</name>
 	<description>This project is for real time stock prices</description>
 	<url/>
 	<licenses>

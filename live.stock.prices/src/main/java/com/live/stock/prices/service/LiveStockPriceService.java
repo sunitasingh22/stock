@@ -8,5 +8,5 @@ public interface LiveStockPriceService {
 
 	public Mono<LiveStockPrice> getStockPrice(String symbol);
 
-	public LiveStockPrice getStockPriceFromRestTemplate(String symbol);
+	//public LiveStockPrice getStockPriceFromRestTemplate(String symbol);
 }

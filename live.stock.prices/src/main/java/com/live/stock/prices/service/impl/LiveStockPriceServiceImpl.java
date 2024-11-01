@@ -2,7 +2,6 @@ package com.live.stock.prices.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor // Lombok
+@RequiredArgsConstructor
 @Slf4j
 public class LiveStockPriceServiceImpl implements LiveStockPriceService{
 
@@ -23,8 +22,6 @@ public class LiveStockPriceServiceImpl implements LiveStockPriceService{
 
 	@Value("${stock.api.key}")
 	private String apiKey;
-
-	private final RestTemplate restTemplate;
 
 	private final WebClient webClient;
 
@@ -53,27 +50,4 @@ public class LiveStockPriceServiceImpl implements LiveStockPriceService{
 				});
 	}
 
-	public LiveStockPrice getStockPriceFromRestTemplate(String symbol) {
-		// String url = apiUrl + "?function=TIME_SERIES_INTRADAY&symbol=" + symbol +
-		// "&interval=1min&apikey=" + apiKey;
-		// log.info("Fetching stock price for symbol: {}", symbol);
-
-		// JsonNode response = restTemplate.getForObject(url, JsonNode.class);
-		// JsonNode timeSeries = response.path("Time Series (1min)");
-		// String latestTimestamp = timeSeries.fieldNames().next();
-		// JsonNode latestData = timeSeries.path(latestTimestamp);
-
-		LiveStockPrice stockPrice = new LiveStockPrice();
-		// stockPrice.setSymbol(symbol);
-		stockPrice.setSymbol("AAPL");
-		// stockPrice.setPrice(latestData.path("1. open").asText());
-		stockPrice.setPrice("1500");
-		// stockPrice.setTimestamp(latestTimestamp);
-		stockPrice.setTimestamp("2024-10-24");
-
-		// log.info("Fetched stock price: {} at {}", stockPrice.getPrice(),
-		// stockPrice.getTimestamp());
-
-		return stockPrice;
-	}
 }

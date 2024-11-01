@@ -10,6 +10,7 @@ import com.live.stock.prices.service.LiveStockPriceService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,28 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 public class LiveStockController {
 
 	private final LiveStockPriceService stockPriceService;
-// dont delete
-//	@GetMapping("/price/{symbol}")
-//	public Mono<LiveStockPrice> getStockPrice(@PathVariable String symbol) {
-//	log.info("Getting live stock price for given symbol: {}", symbol);
-//		LiveStockPrice stockPrice =  stockPriceService.getStockPrice(symbol);
-//	if (stockPrice != null) {
-//		log.info("Stock price for symbol {}: ${}", symbol, stockPrice.getPrice());
-//	} else {
-//		log.warn("Stock price not available symbol: {}", symbol);
-//	}
-//		return stockPrice;
-//	}
 
 	@GetMapping("/price/{symbol}")
-	public LiveStockPrice getStockPriceFromRest(@PathVariable String symbol) {
-		log.info("Getting live stock price for given symbol: {}", symbol);
-		LiveStockPrice stockPrice = stockPriceService.getStockPriceFromRestTemplate(symbol);
-		if (stockPrice != null) {
-			log.info("Stock price for symbol {}: ${}", symbol, stockPrice.getPrice());
-		} else {
-			log.warn("Stock price not available symbol: {}", symbol);
-		}
+	public Mono<LiveStockPrice> getStockPrice(@PathVariable String symbol) {
+	log.info("Getting live stock price for given symbol: {}", symbol);
+		Mono<LiveStockPrice> stockPrice =  stockPriceService.getStockPrice(symbol);
+	if (stockPrice != null) {
+		log.info("Stock price for symbol {}: ${}", symbol, stockPrice);
+	} else {
+		log.warn("Stock price not available symbol: {}", symbol);
+	}
 		return stockPrice;
 	}
+
+
 }
