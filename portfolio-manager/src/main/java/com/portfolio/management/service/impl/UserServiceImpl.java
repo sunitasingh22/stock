@@ -56,8 +56,6 @@ public class UserServiceImpl implements UserService{
 	public Long getUserId(UserBO loginUser) {
 		log.info("Getting user data for username: {}", loginUser.getUsername());
         // Logic to find the user by username or email and return the user ID
-        //Optional<UserBO> user = userRepository.findByUsername(loginUser.getUsername());
-        //return user.map(UserBO::getId).orElse(null);
 		Optional<UserBO> userData = userRepository.findByUsername(loginUser.getUsername());
 	    if (userData.isPresent() && userData.get().getPassword().equals(loginUser.getPassword())) {
 	    	 log.info("User ID {} retrieved for username: {}", userData.get().getId(), loginUser.getUsername());

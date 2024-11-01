@@ -25,7 +25,6 @@ import com.portfolio.management.dto.Stocks;
 import com.portfolio.management.dto.Users;
 import com.portfolio.management.mapper.PortfolioMapper;
 import com.portfolio.management.model.PortfolioBO;
-import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
 
 @SpringBootTest

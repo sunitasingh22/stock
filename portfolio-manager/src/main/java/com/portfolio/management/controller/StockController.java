@@ -62,6 +62,7 @@ public class StockController {
 	public ResponseEntity<List<Stocks>> getAllStocksByUserId(@PathVariable Long userId) {
 		log.info("Getting all stocks for userId: {}", userId);
 		List<StocksBO> stockBo = stockService.getAllStocksByUserId(userId);
+		//convert BO object to dto for response entity
 		List<Stocks> stocksList = StockMapper.INSTANCE.toDtoList(stockBo);
 		if (stocksList.isEmpty()) {
 			log.warn("Stocks not found for userId: {}", userId);
@@ -80,6 +81,7 @@ public class StockController {
 		}else {
 			log.info("Received stocks list from database");
 		}
+		//convert BO object to dto for response entity
 		List<StockList> StockListdto = StockListMapper.INSTANCE.toDtoList(allStocksList);
 		return StockListdto;
 	}

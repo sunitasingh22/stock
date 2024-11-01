@@ -32,6 +32,7 @@ public class UserController {
 	public ResponseEntity<Users> addUser(@RequestBody UserBO user) {
 		 log.info("Request to add a new user: {}", user.getUsername());
 		UserBO createdUser = userService.addUser(user);
+		//convert BO object to dto for response entity
 		 Users userAdded = UserMapper.INSTANCE.userBOToDto(createdUser);
 		 log.info("New user created successfully with userId: {}", userAdded.getEmail());
 		return ResponseEntity.status(HttpStatus.CREATED).body(userAdded);

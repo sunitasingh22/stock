@@ -30,6 +30,7 @@ public class PortfolioController {
 	public ResponseEntity<List<Portfolio>> getPortfolioByUserId(@PathVariable Long userId) {
 		log.info("Fetching portfolio details like stocks, quantity for userId: {}", userId);
 	    List<PortfolioBO> portfolio = portfolioService.getPortfolioByUserId(userId);
+	    //convert BO object to dto for response entity
 	    List<Portfolio> portfolioList = PortfolioMapper.INSTANCE.toDtoList(portfolio);
 	    if (portfolioList.isEmpty()) {
 	        log.warn("Portfolio details not found for userId: {}", userId);
