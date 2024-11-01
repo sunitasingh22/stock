@@ -6,9 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import com.portfolio.management.dto.StockList;
-import com.portfolio.management.dto.Stocks;
 import com.portfolio.management.model.StockListBO;
-import com.portfolio.management.model.StocksBO;
 
 @Mapper
 public interface StockListMapper {
