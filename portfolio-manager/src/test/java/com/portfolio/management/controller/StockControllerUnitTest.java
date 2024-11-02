@@ -20,9 +20,6 @@ import org.springframework.http.ResponseEntity;
 
 import com.portfolio.management.dto.InsertStockRequest;
 import com.portfolio.management.dto.StockList;
-import com.portfolio.management.dto.Stocks;
-import com.portfolio.management.mapper.StockListMapper;
-import com.portfolio.management.model.StockListBO;
 import com.portfolio.management.service.PortfolioService;
 import com.portfolio.management.service.StockListService;
 
@@ -40,7 +37,7 @@ public class StockControllerUnitTest {
 	private Long userId;
 	private Long stockId;
 	private InsertStockRequest addStockRequest;
-	private List<Stocks> stockList;
+	private List<StockList> stockList;
 
 	@BeforeEach
 	public void setUp() {
@@ -48,7 +45,7 @@ public class StockControllerUnitTest {
 		userId = 1L;
 		stockId = 1L;
 		addStockRequest = new InsertStockRequest();
-		stockList = Arrays.asList(new Stocks(), new Stocks());
+		stockList = Arrays.asList(new StockList(), new StockList());
 	}
 
 	@Test

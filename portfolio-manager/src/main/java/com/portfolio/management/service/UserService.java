@@ -6,7 +6,6 @@ public interface UserService {
 	
     public UserBO addUser(UserBO user);
     
-    public String checkUser(UserBO loginUser);
+    public UserBO checkUser(UserBO loginUser);
 
-	public Long getUserId(UserBO loginUser);
 }

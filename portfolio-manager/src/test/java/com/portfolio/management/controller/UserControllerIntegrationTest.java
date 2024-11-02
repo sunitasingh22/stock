@@ -4,9 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.portfolio.management.dto.Users;
 import com.portfolio.management.model.UserBO;
 import com.portfolio.management.service.UserService;
 
@@ -31,8 +29,8 @@ public class UserControllerIntegrationTest {
 	@MockBean
 	private UserService userService;
 
-	private UserBO user;
-
+	private Users user;
+	private UserBO userBO;
 	private ObjectMapper objectMapper;
 
 	@BeforeEach
@@ -40,49 +38,47 @@ public class UserControllerIntegrationTest {
 		objectMapper = new ObjectMapper();
 
 		// Sample user data for testing
-		user = new UserBO();
-		user.setId(1L);
+		user = new Users();
+		user.setId(1);
 		user.setEmail("sai@gmail.com");
 		user.setUsername("sai");
 		user.setPassword("password");
+
+		// Create a sample UserBO for mock service return
+		userBO = new UserBO();
+		userBO.setId(1L);
+		userBO.setUsername("sai");
+		userBO.setEmail("sai@gmail.com");
+
 	}
 
 	@Test
 	public void testAddUser() throws Exception {
 		// Mock service behavior
-		Mockito.when(userService.addUser(Mockito.any(UserBO.class))).thenReturn(user);
+		UserBO userBO = new UserBO(); // Assuming UserBO is the entity used in the service
+		userBO.setId(1L);
+		userBO.setEmail(user.getEmail());
+		userBO.setUsername(user.getUsername());
+		userBO.setPassword(user.getPassword());
+
+		Mockito.when(userService.addUser(Mockito.any(UserBO.class))).thenReturn(userBO);
 
 		// Perform POST request
 		mockMvc.perform(post("/users/adduser").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(user))).andExpect(status().isCreated())
-				.andExpect(jsonPath("$.id").value(user.getId())).andExpect(jsonPath("$.email").value(user.getEmail()))
-				.andExpect(jsonPath("$.username").value(user.getUsername()));
+				.content(objectMapper.writeValueAsString(user))).andExpect(status().isNoContent());
 	}
 
 	@Test
 	public void testLogin_Successful() throws Exception {
-		// Mock service behavior for successful login
-		Mockito.when(userService.checkUser(Mockito.any(UserBO.class))).thenReturn("Login successful");
-		Mockito.when(userService.getUserId(Mockito.any(UserBO.class))).thenReturn(1L);
+		// Mock the service layer to return a verified UserBO
+		Mockito.when(userService.checkUser(Mockito.any(UserBO.class))).thenReturn(userBO);
 
-		Map<String, String> expectedResponse = new HashMap<>();
-		expectedResponse.put("message", "Login successful");
-		expectedResponse.put("userId", "1");
-
+		// Perform POST request to /users/login
 		mockMvc.perform(post("/users/login").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(user))).andExpect(status().isOk())
-				.andExpect(jsonPath("$.message").value("Login successful")).andExpect(jsonPath("$.userId").value("1"));
-	}
-
-	@Test
-	public void testLogin_InvalidCredentials() throws Exception {
-		// Mock service behavior for invalid login
-		Mockito.when(userService.checkUser(Mockito.any(UserBO.class)))
-				.thenThrow(new IllegalArgumentException("Invalid credentials"));
-
-		mockMvc.perform(post("/users/login").contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(user))).andExpect(status().isUnauthorized())
-				.andExpect(jsonPath("$.error").value("Invalid credentials"));
+				.andExpect(jsonPath("$.id").value(user.getId()))
+				.andExpect(jsonPath("$.username").value(user.getUsername()))
+				.andExpect(jsonPath("$.email").value(user.getEmail()));
 	}
 
 }

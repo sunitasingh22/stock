@@ -14,53 +14,47 @@ import org.springframework.test.context.ActiveProfiles;
 import com.portfolio.management.model.UserBO;
 
 @DataJpaTest
-@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UserRepositoryUnitTest {
-	
-	@Autowired
+@ActiveProfiles("test")
+class UserRepositoryUnitTest {
+
+    @Autowired
     private UserRepository userRepository;
 
     private UserBO user;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         user = new UserBO();
-        user.setId(1L); 
-        user.setEmail("sai@gmail.com");
-        user.setUsername("sai");
-        user.setPassword("123123");
+        user.setEmail("testuser@example.com");
+        user.setUsername("testuser");
+        user.setPassword("password123");
         userRepository.save(user);
     }
 
     @Test
-    public void testFindByEmail() {
-        Optional<UserBO> userFromDB = userRepository.findByEmail(user.getEmail());
-
-        assertThat(userFromDB).isPresent();
-        assertThat(userFromDB.get().getEmail()).isEqualTo(user.getEmail());
+    void testFindByEmail() {
+        Optional<UserBO> foundUser = userRepository.findByEmail("testuser@example.com");
+        assertThat(foundUser).isPresent();
+        assertThat(foundUser.get().getUsername()).isEqualTo("testuser");
     }
 
     @Test
-    public void testFindByUsername() {
-        Optional<UserBO> userFromDB = userRepository.findByUsername(user.getUsername());
-
-        assertThat(userFromDB).isPresent();
-        assertThat(userFromDB.get().getUsername()).isEqualTo(user.getUsername());
+    void testFindByUsername() {
+        Optional<UserBO> foundUser = userRepository.findByUsername("testuser");
+        assertThat(foundUser).isPresent();
+        assertThat(foundUser.get().getEmail()).isEqualTo("testuser@example.com");
     }
 
     @Test
-    public void testFindByEmailNotFound() {
-        Optional<UserBO> userFromDB = userRepository.findByEmail("abcd@gmail.com");
-
-        assertThat(userFromDB).isNotPresent();
-    }
-
-    @Test
-    public void testFindByUsernameNotFound() {
-        Optional<UserBO> foundUser = userRepository.findByUsername("stranger");
-
+    void testFindByEmail_NotFound() {
+        Optional<UserBO> foundUser = userRepository.findByEmail("nonexistent@example.com");
         assertThat(foundUser).isNotPresent();
     }
 
+    @Test
+    void testFindByUsername_NotFound() {
+        Optional<UserBO> foundUser = userRepository.findByUsername("nonexistentuser");
+        assertThat(foundUser).isNotPresent();
+    }
 }

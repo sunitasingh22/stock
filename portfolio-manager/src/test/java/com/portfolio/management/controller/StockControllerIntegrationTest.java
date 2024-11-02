@@ -54,8 +54,6 @@ public class StockControllerIntegrationTest {
     	Long userId = 1L;
     	Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
-        addStockRequest.setSymbol("AAPL");
-        addStockRequest.setName("Apple Inc.");
         addStockRequest.setQuantity(10);
         // Act & Assert
         mockMvc.perform(post("/stocks/{userId}/{stockId}", userId, stockId)

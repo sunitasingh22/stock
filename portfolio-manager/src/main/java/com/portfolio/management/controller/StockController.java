@@ -22,7 +22,7 @@ import com.portfolio.management.service.StockListService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/stocks")
 @Slf4j
@@ -33,6 +33,20 @@ public class StockController {
 
 	@Autowired
 	private StockListService stockListService;
+
+	@GetMapping("/{userId}")
+	public ResponseEntity<List<StockList>> getAllStocksByUserId(@PathVariable Long userId) {
+		log.info("Getting all stocks for userId: {}", userId);
+		List<StockListBO> stockListBO = stockListService.getAllStocksByUserId(userId);
+		// convert BO object to dto for response entity
+		List<StockList> stocksList = StockListMapper.INSTANCE.toDtoList(stockListBO);
+		if (stocksList.isEmpty()) {
+			log.warn("Stocks not found for userId: {}", userId);
+		} else {
+			log.info("Found {} stocks for userId: {}", stocksList.size(), userId);
+		}
+		return ResponseEntity.ok(stocksList);
+	}
 
 	@PostMapping("/{userId}/{stockId}")
 	public ResponseEntity<Void> addStockRequest(@PathVariable Long userId, @PathVariable Long stockId,
@@ -50,20 +64,6 @@ public class StockController {
 		portfolioService.removeStockFromPortfolio(userId, stockId, quantity);
 		log.info("Stock(s) deleted successfully for userId: {}", stockId, userId);
 		return ResponseEntity.noContent().build();
-	}
-
-	@GetMapping("/{userId}")
-	public ResponseEntity<List<StockList>> getAllStocksByUserId(@PathVariable Long userId) {
-		log.info("Getting all stocks for userId: {}", userId);
-		List<StockListBO> stockListBO = stockListService.getAllStocksByUserId(userId);
-		// convert BO object to dto for response entity
-		List<StockList> stocksList = StockListMapper.INSTANCE.toDtoList(stockListBO);
-		if (stocksList.isEmpty()) {
-			log.warn("Stocks not found for userId: {}", userId);
-		} else {
-			log.info("Found {} stocks for userId: {}", stocksList.size(), userId);
-		}
-		return ResponseEntity.ok(stocksList);
 	}
 
 	@GetMapping("/all")

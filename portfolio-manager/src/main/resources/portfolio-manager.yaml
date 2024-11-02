@@ -6,63 +6,48 @@ info:
 servers:
   - url: http://localhost:8081/
     description: Local Server
-    
-    
+
 paths:
-  /stocks/all:
+  /stocks/{userId}:
     get:
-      summary: Get list of all stocks from db
-      tags:
-        - StockList
-      operationId: getStockList
+      summary: Get all stocks by user ID
+      description: Retrieve all stocks associated with a given user ID.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
       responses:
         '200':
-          description: Get list of all stocks from db to show in front end drop down
+          description: List of stocks for the specified user ID
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/StockList'
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+        '404':
+          description: No stocks found for the specified user ID
 
-
-  /stocks/{userId}:
-    get:
-      summary: Get all stocks in the portfolio for a specific user
-      parameters:
-        - $ref: '#/components/parameters/userId'
-      tags:
-        - Portfolio
-      operationId: getAllStocks
-      responses:
-        '200':
-          description: A list of all stocks in the user's portfolio
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Stocks'
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
+  /stocks/{userId}/{stockId}:
     post:
-      summary: Add a new stock to the portfolio
-      tags:
-        - Portfolio
-      operationId: addStock
+      summary: Add stock to user's portfolio
+      description: Add a specific stock to the portfolio of a given user.
       parameters:
-        - $ref: '#/components/parameters/userId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+        - name: stockId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the stock
       requestBody:
         required: true
         content:
@@ -72,68 +57,68 @@ paths:
       responses:
         '204':
           description: Stock added successfully
-          
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         '404':
-          description: Resource Not Found
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-                
-  /stocks/{userId}/{stockId}:
-    delete:
-      summary: Remove a stock from user's profile
-      tags: 
-        - Portfolio
-      operationId: deleteStock
+          description: Stock or user not found
+
+  /stocks/{userId}/{stockId}/{quantity}:
+    put:
+      summary: Remove stock from user's portfolio
+      description: Remove a specified quantity of stock from a user's portfolio.
       parameters:
-        - $ref: '#/components/parameters/userId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
         - name: stockId
           in: path
           required: true
-          description: The stock ID to remove from the portfolio
           schema:
             type: integer
+          description: ID of the stock
+        - name: quantity
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Quantity of the stock to remove
       responses:
         '204':
-          description: Stock and associated portfolio entry deleted successfully
-          content: 
-            text/plain:
-              schema: 
-                type: string
-                example: Stock and associated portfolio entry deleted successfully
+          description: Stock removed successfully
         '404':
           description: Stock or user not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                 $ref: '#/components/schemas/Error'
-        
-  /portfolio/{userId}:
+
+  /stocks/all:
     get:
-      summary: Get portfolio details for a specific user
-      parameters:
-        - $ref: '#/components/parameters/userId'
-      tags:
-        - Portfolio
-      operationId: getPortfolioByUserId
+      summary: Get all available stocks
+      description: Retrieve a list of all available stocks.
       responses:
         '200':
-          description: A list of all stocks in the user's portfolio
+          description: List of all stocks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockList'
+        '404':
+          description: No stocks found  
+
+  /portfolio/{userId}:
+    get:
+      summary: Get portfolio by user ID
+      description: Retrieve the portfolio details for a specific user, including stocks and quantities.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '200':
+          description: List of portfolio details for the specified user ID
           content:
             application/json:
               schema:
@@ -141,18 +126,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Portfolio'
         '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  
+          description: Portfolio not found for the specified user ID
+
   /users/adduser:
     post:
       summary: Add a new user
@@ -172,18 +147,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Users'
+        '204':
+          description: User created successfully with no content
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserError'
+                $ref: '#/components/schemas/Error'
         '500':
           description: Email already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserError'
+                $ref: '#/components/schemas/Error'
 
   /users/login:
     post:
@@ -223,8 +200,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserError'
-                
+                $ref: '#/components/schemas/Error'
+
 components:
   parameters:
     userId:
@@ -235,41 +212,37 @@ components:
         type: integer
         format: int64
       required: true
+    stockId:
+      name: stockId
+      in: path
+      description: Stock ID
+      schema:
+        type: integer
+        format: int64
+      required: true
+    quantity:
+      name: quantity
+      in: path
+      description: Stocks Quantity
+      schema:
+        type: integer
+        format: int64
+      required: true
+      
   schemas:
     InsertStockRequest:
       type: object
       description: Request object to insert the stock into the portfolio
       required:
-        - symbol
-        - name
         - quantity
       properties:
-        symbol:
-          type: string
-          example: TCS
-        name:
-          type: string
-          example: Tata Consultancy services
         quantity:
           type: integer
           minLength: 1
           maxLength: 1000
-          example: 200
+          example: 20
       additionalProperties: false
       
-    Stocks:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        symbol:
-          type: string
-          example: TCS
-        name:
-          type: string
-          example: Tata Consultancy services
-
     Portfolio:
       type: object
       description: Portfolio entry for a user
@@ -279,10 +252,8 @@ components:
           example: 1
         user:
           $ref: '#/components/schemas/Users'
-          description: User who owns the portfolio entry
         stock:
-          $ref: '#/components/schemas/Stocks'
-          description: Stock associated with this portfolio entry
+          $ref: '#/components/schemas/StockList'
         quantity:
           type: integer
           example: 20
@@ -327,6 +298,7 @@ components:
           type: string
           example: "sunita"
   
+    
 
     Error:
       type: object
@@ -337,13 +309,3 @@ components:
         message:
           type: string
           example: Stock/Portfolio not found
-          
-    UserError:
-      type: object
-      properties:
-        code:
-          type: integer
-          example: 404
-        message:
-          type: string
-          example: User not found

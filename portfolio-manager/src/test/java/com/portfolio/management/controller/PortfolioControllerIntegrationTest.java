@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.management.dto.Portfolio;
-import com.portfolio.management.dto.Stocks;
+import com.portfolio.management.dto.StockList;
 import com.portfolio.management.dto.Users;
 import com.portfolio.management.mapper.PortfolioMapper;
 import com.portfolio.management.model.PortfolioBO;
@@ -59,12 +59,12 @@ public class PortfolioControllerIntegrationTest {
         user1.setPassword("123123");
         user1.setEmail("sai@gmail.com");
 
-        Stocks stock1 = new Stocks();
+        StockList stock1 = new StockList();
         stock1.setId(1);
         stock1.setSymbol("AAPL");
         stock1.setName("Apple Inc.");
 
-        Stocks stock2 = new Stocks();
+        StockList stock2 = new StockList();
         stock2.setId(2);
         stock2.setSymbol("AA");
         stock2.setName("AAAAA");

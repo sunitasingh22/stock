@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService{
         return newUser;
     }
     
-    public String checkUser(UserBO loginUser) {
+    public UserBO checkUser(UserBO loginUser) {
     	 log.info("Check User is valid for Login for username: {}", loginUser.getUsername());
         Optional<UserBO> userData = userRepository.findByUsername(loginUser.getUsername());
         
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService{
             UserBO user = userData.get();
             if (user.getPassword().equals(loginUser.getPassword())) {
             	 log.info("Login successful for username: {}", loginUser.getUsername());
-                return "Login successful";
+                return user;
             } else {
             	 log.warn("Invalid login for username: {}", loginUser.getUsername());
                 throw new IllegalArgumentException("Invalid credentials");
@@ -53,17 +53,6 @@ public class UserServiceImpl implements UserService{
         }
     }
 
-	public Long getUserId(UserBO loginUser) {
-		log.info("Getting user data for username: {}", loginUser.getUsername());
-        // Logic to find the user by username or email and return the user ID
-		Optional<UserBO> userData = userRepository.findByUsername(loginUser.getUsername());
-	    if (userData.isPresent() && userData.get().getPassword().equals(loginUser.getPassword())) {
-	    	 log.info("User ID {} retrieved for username: {}", userData.get().getId(), loginUser.getUsername());
-	        return userData.get().getId();
-	    } else {
-	    	log.warn("Invalid login for username: {}", loginUser.getUsername());
-	        throw new IllegalArgumentException("Invalid credentials");
-	    }
-    }
+	
 
 }

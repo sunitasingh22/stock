@@ -1,10 +1,10 @@
--- Host: localhost    Database: stockman
+-- Host: localhost    Database: stockmanager
 --
--- Table structure for table `stocks`
 --
-DROP DATABASE IF EXISTS stockman;
-CREATE DATABASE stockman;
-USE stockman;
+DROP DATABASE IF EXISTS stockmanager;
+CREATE DATABASE stockmanager;
+
+USE stockmanager;
 
 
 --

@@ -64,22 +64,19 @@ public class UserServiceUnitTest {
 		UserBO loginUser = new UserBO();
 		loginUser.setUsername("sai");
 		loginUser.setPassword("password");
+		
+		 // Mock the repository to return the user when searching by username
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-		String result = userService.checkUser(loginUser);
 
-		assertThat(result).isEqualTo("Login successful");
+		// Call the service method
+        UserBO result = userService.checkUser(user);
+
+        // Assertions
+        assertEquals(user.getUsername(), result.getUsername());
+        assertEquals(user.getPassword(), result.getPassword());
 	}
 
-	@Test
-	public void testGetUserId() {
-		UserBO loginUser = new UserBO();
-		loginUser.setUsername("sai");
-		loginUser.setPassword("password");
-
-		Long userId = userService.getUserId(loginUser);
-
-		assertNotNull(userId);
-		assertThat(userId).isEqualTo(user.getId());
-	}
+	
 
 }

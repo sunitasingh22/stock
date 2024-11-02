@@ -1,10 +1,6 @@
 package com.portfolio.management.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,30 +25,25 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping("/adduser")
-	public ResponseEntity<Users> addUser(@RequestBody UserBO user) {
-		 log.info("Request to add a new user: {}", user.getUsername());
-		UserBO createdUser = userService.addUser(user);
-		//convert BO object to dto for response entity
-		 Users userAdded = UserMapper.INSTANCE.userBOToDto(createdUser);
-		 log.info("New user created successfully with userId: {}", userAdded.getEmail());
-		return ResponseEntity.status(HttpStatus.CREATED).body(userAdded);
+	public ResponseEntity<Void> addUser(@RequestBody Users user) {
+		log.info("Request to add a new user: {}", user.getUsername());
+		// convert dto object to BO for DB operations
+		UserBO userBO = UserMapper.INSTANCE.userDtoToBO(user);
+		UserBO createdUser = userService.addUser(userBO);
+		
+		log.info("New user created successfully with userId: {}", createdUser.getEmail());
+		return ResponseEntity.noContent().build();
 	}
 
-	 @PostMapping("/login")
-	    public ResponseEntity<Map<String, String>> login(@RequestBody UserBO loginUser) {
-		 log.info("Login request received for user: {}", loginUser.getUsername());
-		 Map<String,String> responseData = new HashMap<>();
-	        try {
-	            String message = userService.checkUser(loginUser);
-	            Long userId = userService.getUserId(loginUser); 
-	            responseData.put("message", message);
-	            responseData.put("userId", userId.toString());
-	            return ResponseEntity.ok(responseData);
-	        } catch (IllegalArgumentException e) {
-	        	log.warn("Login failed for user: {}. error Message: {}", loginUser.getUsername(), e.getMessage());
-	        	responseData.put("error", e.getMessage());
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseData);
-	        }
-	    }
+	@PostMapping("/login")
+	public ResponseEntity<Users> login(@RequestBody Users loginUser) {
+		log.info("Login request received for user: {}", loginUser.getUsername());
+		// convert dto object to BO for DB operations
+		UserBO userBO = UserMapper.INSTANCE.userDtoToBO(loginUser);
+		UserBO verifiedUser = userService.checkUser(userBO);
+		// convert BO object to DTO for response entity
+		Users userData = UserMapper.INSTANCE.userBOToDto(verifiedUser);
+		return ResponseEntity.ok(userData);
+	}
 
 }
