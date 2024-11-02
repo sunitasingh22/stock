@@ -54,4 +54,5 @@ CREATE TABLE `portfolios` (
    CONSTRAINT `portfolios_ibfk_2` FOREIGN KEY (`stock_id`) REFERENCES `stocklist` (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
+DROP DATABASE IF EXISTS stockmanager_test;
+CREATE DATABASE stockmanager_test;
