@@ -19,6 +19,7 @@ This repository contains a microservices-based application for managing a user's
 3. ### **Stock Price Service**
    - **Purpose**: Fetches real-time stock prices based on stock symbols.
    - **Description**: This service provides real-time stock price data, which can be used to view current valuations in the portfolio. Users provide a stock symbol, and the service returns up-to-date pricing information for that stock.
+   - Alpha Vantage allows only **25 requests per day** for accessing free stock API data.
 
 ## Setup Instructions
 
