@@ -54,8 +54,7 @@ public class UserControllerIntegrationTest {
 
 	@Test
 	public void testAddUser() throws Exception {
-		// Mock service behavior
-		UserBO userBO = new UserBO(); // Assuming UserBO is the entity used in the service
+		UserBO userBO = new UserBO(); 
 		userBO.setId(1L);
 		userBO.setEmail(user.getEmail());
 		userBO.setUsername(user.getUsername());

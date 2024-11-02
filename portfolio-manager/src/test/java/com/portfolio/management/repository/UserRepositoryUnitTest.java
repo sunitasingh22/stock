@@ -26,35 +26,35 @@ class UserRepositoryUnitTest {
     @BeforeEach
     void setUp() {
         user = new UserBO();
-        user.setEmail("testuser@example.com");
-        user.setUsername("testuser");
+        user.setEmail("sai@gmail.com");
+        user.setUsername("sai");
         user.setPassword("password123");
         userRepository.save(user);
     }
 
     @Test
     void testFindByEmail() {
-        Optional<UserBO> foundUser = userRepository.findByEmail("testuser@example.com");
+        Optional<UserBO> foundUser = userRepository.findByEmail("sai@gmail.com");
         assertThat(foundUser).isPresent();
-        assertThat(foundUser.get().getUsername()).isEqualTo("testuser");
+        assertThat(foundUser.get().getUsername()).isEqualTo("sai");
     }
 
     @Test
     void testFindByUsername() {
-        Optional<UserBO> foundUser = userRepository.findByUsername("testuser");
+        Optional<UserBO> foundUser = userRepository.findByUsername("sai");
         assertThat(foundUser).isPresent();
-        assertThat(foundUser.get().getEmail()).isEqualTo("testuser@example.com");
+        assertThat(foundUser.get().getEmail()).isEqualTo("sai@gmail.com");
     }
 
     @Test
-    void testFindByEmail_NotFound() {
-        Optional<UserBO> foundUser = userRepository.findByEmail("nonexistent@example.com");
+    void testFindByEmailNotFound() {
+        Optional<UserBO> foundUser = userRepository.findByEmail("nonemail@gmail.com");
         assertThat(foundUser).isNotPresent();
     }
 
     @Test
-    void testFindByUsername_NotFound() {
-        Optional<UserBO> foundUser = userRepository.findByUsername("nonexistentuser");
+    void testFindByUsernameNotFound() {
+        Optional<UserBO> foundUser = userRepository.findByUsername("nonemail");
         assertThat(foundUser).isNotPresent();
     }
 }

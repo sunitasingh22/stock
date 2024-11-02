@@ -13,13 +13,11 @@ public class UserMapperTest {
 
     @Test
     public void testUserBOToDto() {
-        // Create sample data for UserBO
         UserBO userBO = new UserBO();
         userBO.setId(1L);
         userBO.setUsername("sai");
         userBO.setEmail("sai@gmail.com");
 
-        // Perform mapping
         Users userDTO = userMapper.userBOToDto(userBO);
 
         // Assert mappings
@@ -31,13 +29,11 @@ public class UserMapperTest {
 
     @Test
     public void testUserDtoToBO() {
-        // Create sample data for Users DTO
         Users userDTO = new Users();
         userDTO.setId(1);
         userDTO.setUsername("sai");
         userDTO.setEmail("sai@gmail.com");
 
-        // Perform mapping
         UserBO userBO = userMapper.userDtoToBO(userDTO);
 
         // Assert mappings

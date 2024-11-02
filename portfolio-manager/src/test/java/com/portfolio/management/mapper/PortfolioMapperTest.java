@@ -21,9 +21,9 @@ public class PortfolioMapperTest {
     private final PortfolioMapper portfolioMapper = PortfolioMapper.INSTANCE;
 
     @Test
-    public void testToDtoList_WithValidPortfolioBOList_ReturnsPortfolioList() {
-        // Arrange
-        UserBO user = new UserBO();
+    public void testToDtoListReturnsPortfolioList() {
+
+    	UserBO user = new UserBO();
         user.setId(1L);
         
         StockListBO stock = new StockListBO();
@@ -47,27 +47,21 @@ public class PortfolioMapperTest {
 
         List<PortfolioBO> portfolioBOList = Arrays.asList(portfolioBO1, portfolioBO2);
 
-        // Act
         List<Portfolio> portfolioList = portfolioMapper.toDtoList(portfolioBOList);
 
-        // Assert
         assertThat(portfolioList).hasSize(2);
-       // assertThat(portfolioList.get(0).getStockSymbol()).isEqualTo("AAPL");
-       // assertThat(portfolioList.get(1).getStockSymbol()).isEqualTo("AAPL");
+        assertThat(portfolioList.get(0).getStock().getSymbol()).isEqualTo("AAPL");
+        assertThat(portfolioList.get(1).getStock().getSymbol()).isEqualTo("AAPL");
     }
 
     @Test
-    public void testToDtoList_WithEmptyList_ReturnsEmptyList() {
-        // Act
+    public void testToDtoListReturnsEmptyList() {
         List<Portfolio> portfolioList = portfolioMapper.toDtoList(Collections.emptyList());
-
-        // Assert
         assertThat(portfolioList).isEmpty();
     }
 
     @Test
-    public void testToBOList_WithValidPortfolioList_ReturnsPortfolioBOList() {
-        // Arrange
+    public void testToBOListReturnsPortfolioBOList() {
         Users user = new Users();
         user.setId(1);
         
@@ -90,10 +84,8 @@ public class PortfolioMapperTest {
 
         List<Portfolio> portfolioList = Arrays.asList(portfolio1, portfolio2);
 
-        // Act
         List<PortfolioBO> portfolioBOList = portfolioMapper.toBOList(portfolioList);
 
-        // Assert
         assertThat(portfolioBOList).hasSize(2);
         assertThat(portfolioBOList.get(0).getStock().getSymbol()).isEqualTo("AAPL");
         assertThat(portfolioBOList.get(1).getStock().getSymbol()).isEqualTo("AAPL");
@@ -101,16 +93,12 @@ public class PortfolioMapperTest {
 
     @Test
     public void testToBOList_WithEmptyList_ReturnsEmptyList() {
-        // Act
         List<PortfolioBO> portfolioBOList = portfolioMapper.toBOList(Collections.emptyList());
-
-        // Assert
         assertThat(portfolioBOList).isEmpty();
     }
 
     @Test
-    public void testPortfolioBOToDto_WithValidPortfolioBO_ReturnsPortfolio() {
-        // Arrange
+    public void testPortfolioBOToDtoReturnsPortfolio() {
         UserBO user = new UserBO();
         user.setId(1L);
         
@@ -126,17 +114,14 @@ public class PortfolioMapperTest {
         portfolioBO.setQuantity(100);
         portfolioBO.setAddedAt(new Date());
 
-        // Act
         Portfolio portfolio = portfolioMapper.portfolioBOToDto(portfolioBO);
 
-        // Assert
         assertThat(portfolio).isNotNull();
         assertThat(portfolio.getQuantity()).isEqualTo(100);
     }
 
     @Test
-    public void testPortfolioDtoToBO_WithValidPortfolio_ReturnsPortfolioBO() {
-        // Arrange
+    public void testPortfolioDtoToBOReturnsPortfolioBO() {
         Users user = new Users();
         user.setId(1);
         
@@ -151,10 +136,8 @@ public class PortfolioMapperTest {
         portfolio.setStock(stock);
         portfolio.setQuantity(100);
 
-        // Act
         PortfolioBO portfolioBO = portfolioMapper.portfolioDtoToBO(portfolio);
 
-        // Assert
         assertThat(portfolioBO).isNotNull();
         assertThat(portfolioBO.getStock().getSymbol()).isEqualTo("AAPL");
         assertThat(portfolioBO.getQuantity()).isEqualTo(100);

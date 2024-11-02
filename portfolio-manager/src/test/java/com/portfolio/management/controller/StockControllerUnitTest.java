@@ -34,18 +34,11 @@ public class StockControllerUnitTest {
 	@Mock
 	private PortfolioService portfolioService;
 
-	private Long userId;
-	private Long stockId;
-	private InsertStockRequest addStockRequest;
-	private List<StockList> stockList;
-
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		userId = 1L;
-		stockId = 1L;
-		addStockRequest = new InsertStockRequest();
-		stockList = Arrays.asList(new StockList(), new StockList());
+		new InsertStockRequest();
+		Arrays.asList(new StockList(), new StockList());
 	}
 
 	@Test
@@ -54,10 +47,8 @@ public class StockControllerUnitTest {
 		Long stockId = 10L;
 		InsertStockRequest addStockRequest = new InsertStockRequest();
 
-		// Act
 		ResponseEntity<Void> response = stockController.addStockRequest(userId, stockId, addStockRequest);
 
-		// Assert
 		verify(portfolioService, times(1)).addStockRequest(userId, stockId, addStockRequest);
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 	}
@@ -68,10 +59,8 @@ public class StockControllerUnitTest {
 		Long stockId = 10L;
 		Integer quantity = 5;
 
-		// Act
 		ResponseEntity<String> response = stockController.removeStock(userId, stockId, quantity);
 
-		// Assert
 		verify(portfolioService, times(1)).removeStockFromPortfolio(userId, stockId, quantity);
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 	}
@@ -80,17 +69,14 @@ public class StockControllerUnitTest {
 	void testGetAllStocksByUserId() {
 		Long userId = 1L;
 	    
-	    // Scenario: User has no stocks
-	    when(stockListService.getAllStocksByUserId(userId)).thenReturn(new ArrayList<>()); // Return empty list
+	    when(stockListService.getAllStocksByUserId(userId)).thenReturn(new ArrayList<>());
 
-	    // Act
 	    ResponseEntity<List<StockList>> response = stockController.getAllStocksByUserId(userId);
 
-	    // Assert
 	    verify(stockListService, times(1)).getAllStocksByUserId(userId);
 	    assertEquals(HttpStatus.OK, response.getStatusCode());
-	    assertNotNull(response.getBody()); // Check that the body is not null
-	    assertEquals(0, response.getBody().size()); // Ensure the size is as expected
+	    assertNotNull(response.getBody()); 
+	    assertEquals(0, response.getBody().size());
     }
 
 }

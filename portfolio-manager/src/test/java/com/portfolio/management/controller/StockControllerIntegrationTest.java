@@ -55,7 +55,6 @@ public class StockControllerIntegrationTest {
     	Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
         addStockRequest.setQuantity(10);
-        // Act & Assert
         mockMvc.perform(post("/stocks/{userId}/{stockId}", userId, stockId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(addStockRequest)))
@@ -77,9 +76,7 @@ public class StockControllerIntegrationTest {
     void testGetAllStocksByUserId() throws Exception {
         Long userId = 1L;
         List<StockListBO> stockListBO = new ArrayList<>();
-        // Populate stockListBO with test data
-        stockListBO.add(new StockListBO()); // Example, replace with actual data
-        // Mock the service call
+        stockListBO.add(new StockListBO()); 
         when(stockService.getAllStocksByUserId(userId)).thenReturn(stockListBO);
 
         mockMvc.perform(get("/stocks/{userId}", userId))

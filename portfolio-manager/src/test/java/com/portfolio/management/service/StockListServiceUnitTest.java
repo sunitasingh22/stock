@@ -43,51 +43,28 @@ public class StockListServiceUnitTest {
 	@Mock
 	private UserRepository userRepository;
 
-	private StockListBO stock;
-	private UserBO user;
-	private PortfolioBO portfolio;
-
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-
-		/*
-		 * assertThat(stockService).isNotNull(); assertThat(userRepository).isNotNull();
-		 * assertThat(stockRepository).isNotNull();
-		 * assertThat(portfolioRepository).isNotNull();
-		 * 
-		 * user = new UserBO(); user.setId(1L); user.setUsername("testUser");
-		 * user.setPassword("password");
-		 * 
-		 * stock = new StockListBO(); stock.setId(1L); stock.setSymbol("AAPL");
-		 * 
-		 * portfolio = new PortfolioBO(); portfolio.setUser(user);
-		 * portfolio.setStock(stock); portfolio.setQuantity(11);
-		 */
 	}
 
 	@Test
     void testGetAllStocks() {
-        // Arrange
         List<StockListBO> stockList = new ArrayList<>();
-        stockList.add(new StockListBO()); // Add a mock stock for testing
+        stockList.add(new StockListBO());
         when(stockListRepository.findAll()).thenReturn(stockList);
 
-        // Act
         List<StockListBO> result = stockListService.getAllStocks();
 
-        // Assert
         assertEquals(1, result.size());
         verify(stockListRepository, times(1)).findAll();
     }
 
     @Test
-    void testGetAllStocksByUserId_UserNotFound() {
-        // Arrange
+    void testGetAllStocksByUserIdUserNotFound() {
         Long userId = 1L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             stockListService.getAllStocksByUserId(userId);
         });
@@ -97,38 +74,32 @@ public class StockListServiceUnitTest {
     }
 
     @Test
-    void testGetAllStocksByUserId_PortfolioNotFound() {
-        // Arrange
+    void testGetAllStocksByUserIdPortfolioNotFound() {
         Long userId = 1L;
-        UserBO user = new UserBO(); // Create a mock user
+        UserBO user = new UserBO(); 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(portfolioRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
-        // Act
         List<StockListBO> result = stockListService.getAllStocksByUserId(userId);
 
-        // Assert
         assertEquals(0, result.size());
         verify(userRepository, times(1)).findById(userId);
         verify(portfolioRepository, times(1)).findByUserId(userId);
     }
 
     @Test
-    void testGetAllStocksByUserId_Success() {
-        // Arrange
+    void testGetAllStocksByUserIdSuccess() {
         Long userId = 1L;
         UserBO user = new UserBO();
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         PortfolioBO portfolio = new PortfolioBO();
-        StockListBO stock = new StockListBO(); // Create a mock stock
+        StockListBO stock = new StockListBO();
         portfolio.setStock(stock);
         when(portfolioRepository.findByUserId(userId)).thenReturn(Collections.singletonList(portfolio));
 
-        // Act
         List<StockListBO> result = stockListService.getAllStocksByUserId(userId);
 
-        // Assert
         assertEquals(1, result.size());
         assertEquals(stock, result.get(0));
         verify(userRepository, times(1)).findById(userId);

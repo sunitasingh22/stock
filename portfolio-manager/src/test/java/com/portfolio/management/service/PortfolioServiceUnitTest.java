@@ -45,19 +45,16 @@ public class PortfolioServiceUnitTest {
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		
 	}
 
 	@Test
-    void testRemoveStockFromPortfolio_UserNotFound() {
-        // Arrange
+    void testRemoveStockFromPortfolioUserNotFound() {
         Long userId = 1L;
         Long stockId = 1L;
         Integer quantity = 10;
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             portfolioService.removeStockFromPortfolio(userId, stockId, quantity);
         });
@@ -67,8 +64,7 @@ public class PortfolioServiceUnitTest {
     }
 
     @Test
-    void testRemoveStockFromPortfolio_StockNotFound() {
-        // Arrange
+    void testRemoveStockFromPortfolioStockNotFound() {
         Long userId = 1L;
         Long stockId = 1L;
         Integer quantity = 10;
@@ -77,7 +73,6 @@ public class PortfolioServiceUnitTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(stockListRepository.findById(stockId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             portfolioService.removeStockFromPortfolio(userId, stockId, quantity);
         });
@@ -88,8 +83,7 @@ public class PortfolioServiceUnitTest {
     }
 
     @Test
-    void testRemoveStockFromPortfolio_Success() {
-        // Arrange
+    void testRemoveStockFromPortfolioSuccess() {
         Long userId = 1L;
         Long stockId = 1L;
         Integer quantity = 10;
@@ -103,11 +97,9 @@ public class PortfolioServiceUnitTest {
         when(stockListRepository.findById(stockId)).thenReturn(Optional.of(stock));
         when(portfolioRepository.findByUserIdAndStockId(userId, stockId)).thenReturn(existingPortfolio);
 
-        // Act
         portfolioService.removeStockFromPortfolio(userId, stockId, quantity);
 
-        // Assert
-        assertEquals(5, existingPortfolio.getQuantity()); // Ensure quantity is updated correctly
+        assertEquals(5, existingPortfolio.getQuantity());
         verify(portfolioRepository, times(1)).save(existingPortfolio);
     }
 
@@ -128,39 +120,32 @@ public class PortfolioServiceUnitTest {
     }
 
     @Test
-    void testGetPortfolioByUserIdAndStockId_Success() {
-        // Arrange
+    void testGetPortfolioByUserIdAndStockIdSuccess() {
         Long userId = 1L;
         Long stockId = 1L;
         PortfolioBO portfolio = new PortfolioBO();
         when(portfolioRepository.findByUserIdAndStockId(userId, stockId)).thenReturn(portfolio);
 
-        // Act
         PortfolioBO result = portfolioService.getPortfolioByUserIdAndStockId(userId, stockId);
 
-        // Assert
         assertEquals(portfolio, result);
         verify(portfolioRepository, times(1)).findByUserIdAndStockId(userId, stockId);
     }
 
     @Test
-    void testGetPortfolioByUserIdAndStockId_NotFound() {
-        // Arrange
+    void testGetPortfolioByUserIdAndStockIdNotFound() {
         Long userId = 1L;
         Long stockId = 1L;
         when(portfolioRepository.findByUserIdAndStockId(userId, stockId)).thenReturn(null);
 
-        // Act
         PortfolioBO result = portfolioService.getPortfolioByUserIdAndStockId(userId, stockId);
 
-        // Assert
         assertNull(result);
         verify(portfolioRepository, times(1)).findByUserIdAndStockId(userId, stockId);
     }
 
     @Test
-    void testAddStockRequest_UserNotFound() {
-        // Arrange
+    void testAddStockRequestUserNotFound() {
         Long userId = 1L;
         Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
@@ -168,7 +153,6 @@ public class PortfolioServiceUnitTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             portfolioService.addStockRequest(userId, stockId, addStockRequest);
         });
@@ -178,8 +162,7 @@ public class PortfolioServiceUnitTest {
     }
 
     @Test
-    void testAddStockRequest_StockNotFound() {
-        // Arrange
+    void testAddStockRequestStockNotFound() {
         Long userId = 1L;
         Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
@@ -189,7 +172,6 @@ public class PortfolioServiceUnitTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(stockListRepository.findById(stockId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             portfolioService.addStockRequest(userId, stockId, addStockRequest);
         });
@@ -200,8 +182,7 @@ public class PortfolioServiceUnitTest {
     }
 
     @Test
-    void testAddStockRequest_StockAlreadyInPortfolio() {
-        // Arrange
+    void testAddStockRequestStockAlreadyInPortfolio() {
         Long userId = 1L;
         Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
@@ -216,17 +197,14 @@ public class PortfolioServiceUnitTest {
         when(stockListRepository.findById(stockId)).thenReturn(Optional.of(stock));
         when(portfolioRepository.findByUserIdAndStockId(userId, stockId)).thenReturn(existingPortfolio);
 
-        // Act
         portfolioService.addStockRequest(userId, stockId, addStockRequest);
 
-        // Assert
         assertEquals(15, existingPortfolio.getQuantity()); // Ensure quantity is updated correctly
         verify(portfolioRepository, times(1)).save(existingPortfolio);
     }
 
     @Test
-    void testAddStockRequest_NewStock() {
-        // Arrange
+    void testAddStockRequestNewStock() {
         Long userId = 1L;
         Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
@@ -238,10 +216,8 @@ public class PortfolioServiceUnitTest {
         when(stockListRepository.findById(stockId)).thenReturn(Optional.of(stock));
         when(portfolioRepository.findByUserIdAndStockId(userId, stockId)).thenReturn(null);
 
-        // Act
         portfolioService.addStockRequest(userId, stockId, addStockRequest);
 
-        // Assert
         verify(portfolioRepository, times(1)).save(any(PortfolioBO.class));
     }
 

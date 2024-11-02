@@ -45,15 +45,12 @@ public class UserServiceUnitTest {
 
 	@Test
 	public void testAddUser() {
-		// Mock repository to return empty Optional to simulate "username does not exist"
 	    when(userRepository.findByUsername("sai")).thenReturn(Optional.empty());
 	    
-	    // Mock save operation to return the user object
 	    when(userRepository.save(any(UserBO.class))).thenReturn(user);
 
 	    UserBO savedUser = userService.addUser(user);
 
-	    // Assert
 	    assertThat(savedUser).isNotNull();
 	    assertThat(savedUser.getId()).isEqualTo(1L);
 	    assertThat(savedUser.getEmail()).isEqualTo("sai@gmail.com");
@@ -65,14 +62,10 @@ public class UserServiceUnitTest {
 		loginUser.setUsername("sai");
 		loginUser.setPassword("password");
 		
-		 // Mock the repository to return the user when searching by username
         when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
-
-		// Call the service method
         UserBO result = userService.checkUser(user);
 
-        // Assertions
         assertEquals(user.getUsername(), result.getUsername());
         assertEquals(user.getPassword(), result.getPassword());
 	}

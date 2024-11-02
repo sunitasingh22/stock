@@ -36,20 +36,17 @@ public class PortfolioRepositoryUnitTest {
     @BeforeEach
     public void setUp() {
         user = new UserBO();
-       // user.setId(1L);
         user.setEmail("sai@gmail.com");
         user.setUsername("sai");
         user.setPassword("123123");
         user = userRepository.save(user);
 
         stock = new StockListBO();
-        //stock.setId(2L);
         stock.setSymbol("AAPL");
         stock.setName("Apple inc.");
         stock = stocksRepository.save(stock);
 
         portfolio = new PortfolioBO();
-       // portfolio.setId(1L);
         portfolio.setUser(user);
         portfolio.setStock(stock);
         portfolio.setQuantity(10);
