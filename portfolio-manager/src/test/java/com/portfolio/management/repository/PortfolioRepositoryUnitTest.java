@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.portfolio.management.model.PortfolioBO;
-import com.portfolio.management.model.StocksBO;
+import com.portfolio.management.model.StockListBO;
 import com.portfolio.management.model.UserBO;
 
 @DataJpaTest
@@ -27,10 +27,10 @@ public class PortfolioRepositoryUnitTest {
     private UserRepository userRepository;  
 	
     @Autowired
-    private StockRepository stocksRepository;
+    private StockListRepository stocksRepository;
 
     private UserBO user;
-    private StocksBO stock;
+    private StockListBO stock;
     private PortfolioBO portfolio;
 
     @BeforeEach
@@ -42,7 +42,7 @@ public class PortfolioRepositoryUnitTest {
         user.setPassword("123123");
         user = userRepository.save(user);
 
-        stock = new StocksBO();
+        stock = new StockListBO();
         //stock.setId(2L);
         stock.setSymbol("AAPL");
         stock.setName("Apple inc.");

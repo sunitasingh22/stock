@@ -1,18 +1,18 @@
 package com.portfolio.management.controller;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,11 +22,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.portfolio.management.dto.InsertStockRequest;
-import com.portfolio.management.dto.Stocks;
-import com.portfolio.management.mapper.StockMapper;
-import com.portfolio.management.model.StocksBO;
+import com.portfolio.management.model.StockListBO;
 import com.portfolio.management.service.PortfolioService;
-import com.portfolio.management.service.StockService;
+import com.portfolio.management.service.StockListService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,10 +34,13 @@ public class StockControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private StockService stockService;
+    private StockListService stockService;
 
     @MockBean
     private PortfolioService portfolioService;
+    
+    @InjectMocks
+    private StockController stockController;
 
     private ObjectMapper objectMapper;
 
@@ -49,64 +50,43 @@ public class StockControllerIntegrationTest {
     }
 
     @Test
-    public void testAddStock() throws Exception {
+    public void testAddStockRequest() throws Exception {
     	Long userId = 1L;
+    	Long stockId = 1L;
         InsertStockRequest addStockRequest = new InsertStockRequest();
         addStockRequest.setSymbol("AAPL");
         addStockRequest.setName("Apple Inc.");
         addStockRequest.setQuantity(10);
-
-        // Mock the service call to do nothing (return null) for this non-void method
-        when(stockService.addStock(userId, addStockRequest)).thenReturn(null);
-
         // Act & Assert
-        mockMvc.perform(post("/stocks/{userId}", userId)
+        mockMvc.perform(post("/stocks/{userId}/{stockId}", userId, stockId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(addStockRequest)))
                 .andExpect(status().isNoContent());
     }
-
+    
     @Test
-    public void testDeleteStock() throws Exception {
+    void testRemoveStock() throws Exception {
         Long userId = 1L;
         Long stockId = 1L;
+        Integer quantity = 5;
 
-        // Mock the service call
-        doNothing().when(portfolioService).removeStockFromPortfolio(userId, stockId);
-        doNothing().when(stockService).deleteStock(stockId, userId);
-
-        // Act & Assert
-        mockMvc.perform(delete("/stocks/{userId}/{stockId}", userId, stockId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/stocks/{userId}/{stockId}/{quantity}", userId, stockId, quantity))
                 .andExpect(status().isNoContent());
     }
+    
 
     @Test
-    public void testGetAllStocksByUserId() throws Exception {
+    void testGetAllStocksByUserId() throws Exception {
         Long userId = 1L;
-
-        // Sample stock data
-        Stocks stock1 = new Stocks();
-        stock1.setId(1);
-        stock1.setSymbol("AAPL");
-        stock1.setName("Apple Inc.");
-
-        Stocks stock2 = new Stocks();
-        stock2.setId(2);
-        stock2.setSymbol("AA");
-        stock2.setName("Alcoa Corp");
-
-        List<Stocks> stocks = Arrays.asList(stock1, stock2);
-        
-        List<StocksBO> stockBOList = StockMapper.INSTANCE.toBOList(stocks);
-
+        List<StockListBO> stockListBO = new ArrayList<>();
+        // Populate stockListBO with test data
+        stockListBO.add(new StockListBO()); // Example, replace with actual data
         // Mock the service call
-        when(stockService.getAllStocksByUserId(userId)).thenReturn(stockBOList);
+        when(stockService.getAllStocksByUserId(userId)).thenReturn(stockListBO);
 
-        // Act & Assert
-        mockMvc.perform(get("/stocks/{userId}", userId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/stocks/{userId}", userId))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(stocks)));
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 }

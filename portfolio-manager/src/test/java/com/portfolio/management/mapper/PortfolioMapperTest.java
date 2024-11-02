@@ -13,7 +13,7 @@ import com.portfolio.management.dto.Portfolio;
 import com.portfolio.management.dto.Stocks;
 import com.portfolio.management.dto.Users;
 import com.portfolio.management.model.PortfolioBO;
-import com.portfolio.management.model.StocksBO;
+import com.portfolio.management.model.StockListBO;
 import com.portfolio.management.model.UserBO;
 
 public class PortfolioMapperTest {
@@ -34,7 +34,7 @@ public class PortfolioMapperTest {
         user.setPassword("sai123");
         portfolioBO.setUser(user);
 
-        StocksBO stock = new StocksBO();
+        StockListBO stock = new StockListBO();
         stock.setId(1L);
         stock.setSymbol("AAPL");
         stock.setName("Apple Inc");
@@ -95,7 +95,7 @@ public class PortfolioMapperTest {
         user1.setPassword("sai123");
         portfolioBO1.setUser(user1);
 
-        StocksBO stock1 = new StocksBO();
+        StockListBO stock1 = new StockListBO();
         stock1.setId(1L);
         stock1.setSymbol("AAPL");
         portfolioBO1.setStock(stock1);
@@ -110,7 +110,7 @@ public class PortfolioMapperTest {
         user2.setUsername("ram");
         portfolioBO2.setUser(user2);
 
-        StocksBO stock2 = new StocksBO();
+        StockListBO stock2 = new StockListBO();
         stock2.setId(2L);
         stock2.setSymbol("GOOGL");
         portfolioBO2.setStock(stock2);

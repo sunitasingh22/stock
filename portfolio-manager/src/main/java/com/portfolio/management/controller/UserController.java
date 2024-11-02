@@ -19,9 +19,9 @@ import com.portfolio.management.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")
 @Slf4j
 public class UserController {
 

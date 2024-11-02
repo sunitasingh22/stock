@@ -17,9 +17,9 @@ import com.portfolio.management.service.PortfolioService;
 
 import lombok.extern.slf4j.Slf4j;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/portfolio")
-@CrossOrigin(origins = "*")
 @Slf4j
 public class PortfolioController {
 	

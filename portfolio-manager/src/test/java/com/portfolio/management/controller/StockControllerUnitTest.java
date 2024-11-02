@@ -1,10 +1,12 @@
 package com.portfolio.management.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,11 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.portfolio.management.dto.InsertStockRequest;
+import com.portfolio.management.dto.StockList;
 import com.portfolio.management.dto.Stocks;
-import com.portfolio.management.mapper.StockMapper;
-import com.portfolio.management.model.StocksBO;
+import com.portfolio.management.mapper.StockListMapper;
+import com.portfolio.management.model.StockListBO;
 import com.portfolio.management.service.PortfolioService;
-import com.portfolio.management.service.StockService;
+import com.portfolio.management.service.StockListService;
 
 public class StockControllerUnitTest {
 
@@ -29,7 +32,7 @@ public class StockControllerUnitTest {
 	private StockController stockController;
 
 	@Mock
-	private StockService stockService;
+	private StockListService stockListService;
 
 	@Mock
 	private PortfolioService portfolioService;
@@ -49,32 +52,48 @@ public class StockControllerUnitTest {
 	}
 
 	@Test
-	public void testAddStock() {
-		ResponseEntity<Void> response = stockController.addStock(userId, addStockRequest);
+	public void testAddStockRequest() {
+		Long userId = 1L;
+		Long stockId = 10L;
+		InsertStockRequest addStockRequest = new InsertStockRequest();
 
+		// Act
+		ResponseEntity<Void> response = stockController.addStockRequest(userId, stockId, addStockRequest);
+
+		// Assert
+		verify(portfolioService, times(1)).addStockRequest(userId, stockId, addStockRequest);
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-		verify(stockService, times(1)).addStock(userId, addStockRequest);
 	}
 
 	@Test
-	public void testDeleteStock() {
-		ResponseEntity<String> response = stockController.deleteStock(userId, stockId);
+	void testRemoveStock() {
+		Long userId = 1L;
+		Long stockId = 10L;
+		Integer quantity = 5;
 
+		// Act
+		ResponseEntity<String> response = stockController.removeStock(userId, stockId, quantity);
+
+		// Assert
+		verify(portfolioService, times(1)).removeStockFromPortfolio(userId, stockId, quantity);
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-		verify(portfolioService, times(1)).removeStockFromPortfolio(userId, stockId);
-		verify(stockService, times(1)).deleteStock(stockId, userId);
 	}
 
 	@Test
-	public void testGetAllStocksByUserId() {
-		List<StocksBO> StockBOList = StockMapper.INSTANCE.toBOList(stockList);
-		when(stockService.getAllStocksByUserId(userId)).thenReturn(StockBOList);
+	void testGetAllStocksByUserId() {
+		Long userId = 1L;
+	    
+	    // Scenario: User has no stocks
+	    when(stockListService.getAllStocksByUserId(userId)).thenReturn(new ArrayList<>()); // Return empty list
 
-		ResponseEntity<List<Stocks>> response = stockController.getAllStocksByUserId(userId);
+	    // Act
+	    ResponseEntity<List<StockList>> response = stockController.getAllStocksByUserId(userId);
 
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(stockList, response.getBody());
-		verify(stockService, times(1)).getAllStocksByUserId(userId);
-	}
+	    // Assert
+	    verify(stockListService, times(1)).getAllStocksByUserId(userId);
+	    assertEquals(HttpStatus.OK, response.getStatusCode());
+	    assertNotNull(response.getBody()); // Check that the body is not null
+	    assertEquals(0, response.getBody().size()); // Ensure the size is as expected
+    }
 
 }

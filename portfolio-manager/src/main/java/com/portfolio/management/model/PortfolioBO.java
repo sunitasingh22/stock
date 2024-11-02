@@ -27,7 +27,7 @@ public class PortfolioBO {
 
 	@ManyToOne
 	@JoinColumn(name = "stock_id", nullable = false)
-	private StocksBO stock;
+	private StockListBO stock;
 
 	private Integer quantity;
 

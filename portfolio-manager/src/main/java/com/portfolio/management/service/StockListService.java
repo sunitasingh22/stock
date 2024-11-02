@@ -5,7 +5,9 @@ import java.util.List;
 import com.portfolio.management.model.StockListBO;
 
 public interface StockListService {
-	
+
 	public List<StockListBO> getAllStocks();
+
+	public List<StockListBO> getAllStocksByUserId(Long userId);
 
 }

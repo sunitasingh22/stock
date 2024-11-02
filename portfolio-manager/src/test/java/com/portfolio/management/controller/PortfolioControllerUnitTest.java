@@ -18,9 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.portfolio.management.dto.Portfolio;
 import com.portfolio.management.mapper.PortfolioMapper;
-import com.portfolio.management.mapper.StockMapper;
 import com.portfolio.management.model.PortfolioBO;
-import com.portfolio.management.model.StocksBO;
 import com.portfolio.management.service.PortfolioService;
 
 public class PortfolioControllerUnitTest {
